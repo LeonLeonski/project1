@@ -1,16 +1,38 @@
-name: upload data to mongodb
-  working-directory: data
-  env:
-    MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
-  run: uv run python ./transform-validate.py
+name: ModelOps (Build, Deploy)
 
-name: build model
-  working-directory: model
-  env:
-    MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
-  run: uv run python ./train_model.py
-name: upload model
-  working-directory: model
-  env:
-    AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-  run: uv run python ./publish_model.p
+on:
+  workflow_dispatch:
+
+jobs:
+  model:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Upload data to MongoDB
+        working-directory: data
+        env:
+          MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+        run: uv run python transform-validate.py
+
+      - name: Build model
+        working-directory: model
+        env:
+          MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+        run: uv run python train_model.py
+
+      - name: Upload model to Azure
+        working-directory: model
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: uv run python publish_model.py
