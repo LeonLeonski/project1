@@ -71,9 +71,8 @@ def timedelta_minutes(seconds):
     return str(datetime.timedelta(minutes=rounded_minutes))
 
 print("\n*** Flask Backend ***")
-app = Flask(__name__)
-cors = CORS(app)
 app = Flask(__name__, static_url_path='/', static_folder='../frontend/build')
+CORS(app)
 
 @app.route("/")
 def indexPage():
@@ -96,3 +95,6 @@ def hello_world():
         'din33466': timedelta_minutes(din33466(uphill=uphill, downhill=downhill, distance=length)),
         'sac': timedelta_minutes(sac(uphill=uphill, downhill=downhill, distance=length))
         })
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

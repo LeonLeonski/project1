@@ -39,7 +39,7 @@ class JsonLinesImporter:
         file,
         gpx_dir,
         mongo_uri,
-        batch_size=200,
+        batch_size=20,
         db="tracks",
     ):
         self.file = file
