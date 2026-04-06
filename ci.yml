@@ -1,0 +1,16 @@
+name: upload data to mongodb
+  working-directory: data
+  env:
+    MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+  run: uv run python ./transform-validate.py
+
+name: build model
+  working-directory: model
+  env:
+    MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+  run: uv run python ./train_model.py
+name: upload model
+  working-directory: model
+  env:
+    AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+  run: uv run python ./publish_model.p
