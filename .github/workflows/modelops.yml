@@ -1,14 +1,11 @@
-name: ModelOps (Update Model)
-
-# Requires GitHub Action Secrets:
-# AZURE_STORAGE_CONNECTION_STRING
-# MONGO_DB_CONNECTION_STRING
+name: ModelOps (Build, Deploy)
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
-  model:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,10 +22,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run data processing / training
+      - name: Run data processing
         run: |
           python data/transform-validate.py
 
-      - name: Publish model to Azure Blob Storage
+      - name: Publish model
         run: |
           python model/publish_model.py
